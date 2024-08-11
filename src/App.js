@@ -1,12 +1,15 @@
 import logo from './assets/logo.png'
 import QueryBar from "./components/QueryBar";
 import Card from "./components/Card";
-import {selectRecipes} from "./features/recipes";
-import {useSelector} from "react-redux";
+import {selectRecipes, isModalOpen} from "./features/recipes";
+import {useSelector, useDispatch} from "react-redux";
 import RecipeModal from "./components/RecipeModal";
 
 function App() {
     const recipes = useSelector(selectRecipes)
+    const show = useSelector(isModalOpen)
+    const dispatch = useDispatch()
+
     return (
         <div className="container">
             <div className="text-center my-2">
@@ -18,8 +21,14 @@ function App() {
             </div>
             <div className="row">
                 <div className="col">
-                    <button className="btn col-3 col-md-2 col-lg-1 btn-primary float-end" type="button" data-bs-toggle="modal" data-bs-target="#recipeModal">Add</button>
-                    <RecipeModal/>
+                    <button className="btn col-3 col-md-2 col-lg-1 btn-primary float-end"
+                            type="button"
+                            data-bs-toggle="modal"
+                            data-bs-target="#recipeModal"
+                            onClick={() => dispatch({type: 'modal/showModal'})}
+                    >Add
+                    </button>
+                    <RecipeModal show={show}/>
                 </div>
             </div>
         </div>
