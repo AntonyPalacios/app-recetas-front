@@ -20,12 +20,12 @@ const initialState = {
         }, {
             id: 3,
             title: 'Cau Cau',
-            image: null,
+            image: '../assets/ajiPollo.jpeg',
             description: 'Este es un plato que va muy bien con Huancaina'
         }, {
             id: 4,
             title: 'Frejoles con Seco',
-            image: null,
+            image: '../assets/ajiPollo.jpeg',
             description: 'Este es un plato que va muy bien con Huancaina'
         }, {
             id: 5,

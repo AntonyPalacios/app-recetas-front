@@ -1,6 +1,7 @@
 import {useFormik} from "formik";
 import {useDispatch} from "react-redux";
 import {useRef} from "react";
+import TheButton from "./ui/TheButton";
 
 const RecipeForm = () => {
     const imageRef = useRef(null);
@@ -49,7 +50,7 @@ const RecipeForm = () => {
                            formik.setFieldValue('image', event.currentTarget.files[0]);
                        }}/>
             </div>
-            <button className="btn btn-primary float-end" data-bs-dismiss="modal" type="submit">Crear</button>
+            <TheButton className="btn-primary float-end" data-bs-dismiss="modal" type="submit">Crear</TheButton>
         </form>
     )
 }
