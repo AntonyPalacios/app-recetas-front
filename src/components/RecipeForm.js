@@ -2,6 +2,7 @@ import {useFormik} from "formik";
 import {useDispatch} from "react-redux";
 import {useRef} from "react";
 import TheButton from "./ui/TheButton";
+import {createRecipe} from "../features/recipes";
 
 const RecipeForm = () => {
     const imageRef = useRef(null);
@@ -14,12 +15,7 @@ const RecipeForm = () => {
         },
         onSubmit: (values, {resetForm}) => {
             console.log(values)
-            dispatch({
-                type: 'recipe/add', payload: {
-                    id: Date.now().toString(36),
-                    ...values
-                }
-            })
+            dispatch(createRecipe(values))
             resetForm()
             if (imageRef.current) {
                 imageRef.current.value = null;

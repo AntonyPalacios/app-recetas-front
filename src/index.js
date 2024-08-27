@@ -6,11 +6,12 @@ import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import {BrowserRouter} from "react-router-dom";
-import {createStore} from "redux";
+import {applyMiddleware, createStore} from "redux";
 import {Provider} from "react-redux";
-import {reducer} from "./features/recipes";
+import {reducer} from "./features/index";
+import {asyncMiddleware} from "./middleware/async";
 
-const store = createStore(reducer)
+const store = createStore(reducer, applyMiddleware(asyncMiddleware))
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <React.StrictMode>

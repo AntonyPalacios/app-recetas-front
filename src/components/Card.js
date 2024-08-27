@@ -11,7 +11,7 @@ const Card = ({recipe}) => {
     return (
         <div className="col">
             <div className="card p-2 h-100">
-                <Link to={`/recipes/${recipe.id}`} state={recipe} >
+                <Link to={`/recipes/${recipe.recipeId}`} state={recipe} >
                     <img src={imagePlaceholder} className="card-img-top" alt={recipe.title}/>
                 </Link>
                 <div className="card-body">

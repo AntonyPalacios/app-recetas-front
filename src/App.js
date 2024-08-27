@@ -3,8 +3,17 @@ import {Link, Route, Routes} from "react-router-dom";
 import RecipePage from "./pages/RecipePage";
 import logo from "./assets/logo.png";
 import QueryBar from "./components/QueryBar";
+import {useEffect} from "react";
+import {getRecipes} from "./features/recipes";
+import {useDispatch} from "react-redux";
+import {getIngredients} from "./features/ingredients";
 
 function App() {
+    const dispatch = useDispatch();
+    useEffect(()=>{
+        dispatch(getRecipes())
+        dispatch(getIngredients())
+    },[dispatch])
     return (
         <div className="container">
             <div className="text-center my-2">
