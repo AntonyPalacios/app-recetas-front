@@ -5,7 +5,6 @@ const asyncRecipes = mat('recipe') //make async types
 const [setPending, setFulfilled, setError] = asyncMac(asyncRecipes)
 
 export const selectRecipes = state => {
-    console.log(state)
     const {recipes: {entities}} = state
     return entities
 }
@@ -41,6 +40,7 @@ export const createRecipe = (payload) => async (dispatch) => {
         if (!response.ok) {
             console.log(data.message)
         }
+        console.log(data)
         dispatch(addRecipe(data))
     } catch (e) {
         dispatch(setError(e.message))
