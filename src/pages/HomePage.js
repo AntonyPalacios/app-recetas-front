@@ -1,12 +1,11 @@
 import {useDispatch, useSelector} from "react-redux";
-import {isModalOpen, selectRecipes} from "../features/recipes";
+import {selectRecipes, showModal} from "../features/recipes";
 import Card from "../components/Card";
 import TheButton from "../components/ui/TheButton";
-import RecipeModal from "../components/RecipeModal";
 
 const HomePage = () =>{
     const recipes = useSelector(selectRecipes)
-    const show = useSelector(isModalOpen)
+
     const dispatch = useDispatch()
 
     return (
@@ -20,10 +19,9 @@ const HomePage = () =>{
                                type="button"
                                data-bs-toggle="modal"
                                data-bs-target="#recipeModal"
-                               onClick={() => dispatch({type: 'modal/showModal'})}
+                               onClick={() => dispatch(showModal('create'))}
                     >Add
                     </TheButton>
-                    <RecipeModal show={show}/>
                 </div>
             </div>
         </div>

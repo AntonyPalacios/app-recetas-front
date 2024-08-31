@@ -2,10 +2,14 @@ import {useLocation} from "react-router-dom";
 import imagePlaceholder from '../assets/imagePlaceholder.png'
 import Ingredients from "../components/Ingredients";
 import TheContainer from "../components/ui/TheContainer";
+import TheButton from "../components/ui/TheButton";
+import {useDispatch} from "react-redux";
+import {setRecipeToEdit, showModal} from "../features/recipes";
 
 const RecipePage = () => {
     const location = useLocation()
     const recipe = location.state;
+    const dispatch = useDispatch()
 
     return (
         <div className="container">
@@ -20,10 +24,16 @@ const RecipePage = () => {
                     <p>{recipe.description}</p>
                 </div>
             </TheContainer>
-            {/*<Ingredients ingredients={[{amount:500,measure:"gramos",name:"frejoles"},{amount:1,measure:"litro",name:"agua"}]}/>*/}
             <Ingredients ingredients={recipe.ingredients}/>
-
-
+            <div className="col">
+                <TheButton className="btn col-3 btn-primary float-end"
+                           type="button"
+                           data-bs-toggle="modal"
+                           data-bs-target="#recipeModal"
+                           onClick={() => {dispatch(setRecipeToEdit(recipe)); dispatch(showModal('update')); }}
+                >Modificar
+                </TheButton>
+            </div>
         </div>
     )
 }

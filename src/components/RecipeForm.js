@@ -2,28 +2,34 @@ import {FieldArray, FormikProvider, useFormik} from "formik";
 import {useDispatch, useSelector} from "react-redux";
 import {useRef} from "react";
 import TheButton from "./ui/TheButton";
-import {createRecipe} from "../features/recipes";
+import {createRecipe, selectRecipeToEdit, updateRecipe} from "../features/recipes";
 import {selectIngredients} from "../features/ingredients";
 
-const RecipeForm = () => {
+const RecipeForm = ({action}) => {
+    const recipe = useSelector(selectRecipeToEdit)
+    const initialValues= {
+        title: recipe?.title || '',
+            description: recipe?.description || '',
+            image: null,
+            ingredients: recipe?.ingredients.map(x => JSON.stringify(x.ingredient)) || []
+    }
     const imageRef = useRef(null);
     const ingredientsList = useSelector(selectIngredients)
     const dispatch = useDispatch()
     const formik = useFormik({
-        initialValues: {
-            title: '',
-            description: '',
-            image: null,
-            ingredients: []
-        },
+        initialValues,
+        enableReinitialize: true,
         onSubmit: (values, {resetForm}) => {
             const data = values.ingredients.map((ing) => ({
                 ...ing,
                 ingredient: JSON.parse(ing.ingredient),
             }));
             values = {...values, ingredients: data};
-            console.log(values);
-            dispatch(createRecipe(values))
+            if(action==='create'){
+                dispatch(createRecipe(values))
+            }else{
+                dispatch(updateRecipe(values))
+            }
             resetForm()
             if (imageRef.current) {
                 imageRef.current.value = null;
@@ -31,6 +37,12 @@ const RecipeForm = () => {
         },
     })
 
+    const setModalButtonText = (action) => {
+        if(action==='create')
+            return 'Crear'
+        else if(action==='update')
+            return 'Actualizar'
+    };
     return (
         <FormikProvider value={formik}>
         <form onSubmit={formik.handleSubmit}>
@@ -110,7 +122,7 @@ const RecipeForm = () => {
                     )}
                 </FieldArray>
             </div>
-            <TheButton className="btn-primary float-end" data-bs-dismiss="modal" type="submit">Crear</TheButton>
+            <TheButton className="btn-primary float-end" data-bs-dismiss="modal" type="submit">{setModalButtonText(action)}</TheButton>
         </form>
         </FormikProvider>
     )
