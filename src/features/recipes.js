@@ -61,7 +61,7 @@ export const createRecipe = (payload) => async (dispatch) => {
 export const updateRecipe = (payload) => async (dispatch) => {
     try {
         console.log(payload)
-        const response = await fetch(`http://localhost:8000/recipes/${payload.recipeId}`, {
+        const response = await fetch(`http://localhost:8000/recipes/${payload.recipeId}/`, {
             method: 'PUT',
             body: JSON.stringify(payload),
             headers: {
@@ -79,7 +79,7 @@ export const updateRecipe = (payload) => async (dispatch) => {
     } catch (e) {
         console.log(e.message)
     }finally {
-        dispatch(showModal())
+        dispatch(showModal('update'))
     }
 }
 

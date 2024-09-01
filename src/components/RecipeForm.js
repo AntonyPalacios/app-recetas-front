@@ -11,7 +11,12 @@ const RecipeForm = ({action}) => {
         title: recipe?.title || '',
             description: recipe?.description || '',
             image: null,
-            ingredients: recipe?.ingredients.map(x => JSON.stringify(x.ingredient)) || []
+            ingredients: recipe?.ingredients.map(x => {
+                return {
+                    'ingredient':x.ingredient.ingredientId,
+                    'quantity':x.quantity,
+                    'unit':x.unit
+                }}) || []
     }
     const imageRef = useRef(null);
     const ingredientsList = useSelector(selectIngredients)
@@ -20,14 +25,20 @@ const RecipeForm = ({action}) => {
         initialValues,
         enableReinitialize: true,
         onSubmit: (values, {resetForm}) => {
-            const data = values.ingredients.map((ing) => ({
-                ...ing,
-                ingredient: JSON.parse(ing.ingredient),
-            }));
-            values = {...values, ingredients: data};
             if(action==='create'){
                 dispatch(createRecipe(values))
             }else{
+                values.ingredients = values.ingredients.map(ingredientObj => {
+                    const matchedIngredient = ingredientsList.find(item => item.ingredientId == ingredientObj.ingredient);
+                    return {
+                        ...ingredientObj,
+                        ingredient: matchedIngredient || ingredientObj.ingredient // En caso no se encuentre coincidencia, se deja el valor original
+                    };
+                });
+                values = {
+                    ...values,
+                    recipeId:recipe.recipeId
+                }
                 dispatch(updateRecipe(values))
             }
             resetForm()
@@ -81,10 +92,11 @@ const RecipeForm = ({action}) => {
                                             name={`ingredients[${index}].ingredient`}
                                             value={ing.ingredient}
                                             onChange={formik.handleChange}
-                                            defaultValue=""
+
                                         >
                                             <option value="">Seleccione</option>
-                                            {ingredientsList.map((x) => <option value={JSON.stringify(x)} key={x.ingredientId}>{x.name}</option>)}
+                                            {/*{ingredientsList.map((x) => <option value={JSON.stringify(x)} key={x.ingredientId}>{x.name}</option>)}*/}
+                                            {ingredientsList.map((x) => <option value={x.ingredientId} key={x.ingredientId}>{x.name}</option>)}
                                         </select>
                                         </div>
                                         <div className="col-3">
