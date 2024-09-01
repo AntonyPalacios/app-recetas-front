@@ -6,17 +6,18 @@ import {createRecipe, selectCurrentRecipe, updateRecipe} from "../features/recip
 import {selectIngredients} from "../features/ingredients";
 
 const RecipeForm = ({action}) => {
-    const recipe = useSelector(selectCurrentRecipe)
+    let recipe = useSelector(selectCurrentRecipe)
+    if(action==='create') recipe=null
     const initialValues= {
         title: recipe?.title || '',
-            description: recipe?.description || '',
-            image: null,
-            ingredients: recipe?.ingredients.map(x => {
-                return {
-                    'ingredient':x.ingredient.ingredientId,
-                    'quantity':x.quantity,
-                    'unit':x.unit
-                }}) || []
+        description: recipe?.description || '',
+        image: null,
+        ingredients: recipe?.ingredients.map(x => {
+            return {
+                'ingredient':x.ingredient.ingredientId,
+                'quantity':x.quantity,
+                'unit':x.unit
+            }}) || []
     }
     const imageRef = useRef(null);
     const ingredientsList = useSelector(selectIngredients)
