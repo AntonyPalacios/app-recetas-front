@@ -1,5 +1,5 @@
 import RecipeForm from "./RecipeForm";
-import {resetRecipeToEdit, showModal} from "../features/recipes";
+import {showModal} from "../features/recipes";
 import {useDispatch} from "react-redux";
 import {useEffect} from "react";
 
@@ -10,8 +10,7 @@ const RecipeModal = ({show,action}) => {
         const modalElement = document.getElementById('recipeModal');
         const handleHide = () => {
             // Ejecutar dispatch cuando el modal se oculta
-            dispatch(showModal());
-            dispatch(resetRecipeToEdit())
+            dispatch(showModal('update'));
         };
 
         // Añadir el evento al cerrar el modal
@@ -40,7 +39,7 @@ const RecipeModal = ({show,action}) => {
                         <h5 className="modal-title">
                             {setModalType(action)} Receta
                         </h5>
-                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={showModal}></button>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div className="modal-body">
                         <RecipeForm action={action}/>

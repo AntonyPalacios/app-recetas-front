@@ -1,23 +1,23 @@
-import {asyncMac, mac, mat} from "./utils";
+import {asyncMac, mac, mat, reduceReducers} from "./utils";
 
 
 const asyncRecipes = mat('recipe') //make async types
-const [setPending, setFulfilled, setError] = asyncMac(asyncRecipes)
+const [setPending, setError] = asyncMac(asyncRecipes)
 
 export const selectRecipes = state => {
-    const {recipes: {entities:recipes}} = state
-    return recipes
+    return state.recipes.entities.recipes
 }
-export const selectRecipeToEdit = state => {
-    const {recipes: {recipeToEdit}} = state
-    return recipeToEdit
+
+export const selectCurrentRecipe = state => {
+    return state.recipes.entities.currentRecipe
 }
 
 export const addRecipeAction = mac('recipe/add', 'payload')
 export const updateRecipeAction = mac('recipe/update', 'payload')
-export const setRecipeToEdit = mac('recipe/setRecipeToEdit','payload')
+export const setCurrentRecipe = mac('recipe/setCurrentRecipe','payload')
 export const showModal = mac('modal/showModal','payload')
-export const resetRecipeToEdit = mac('recipe/resetRecipeToEdit')
+export const resetCurrentRecipe = mac('recipe/resetCurrentRecipe')
+export const setRecipes = mac('recipe/set','payload')
 
 export const modalState = state => state.recipes.modal
 
@@ -27,7 +27,7 @@ export const getRecipes = () => async dispatch => {
     try {
         const response = await fetch('http://localhost:8000/recipes/')
         const data = await response.json()
-        dispatch(setFulfilled(data))
+        dispatch(setRecipes(data))
     } catch (e) {
         dispatch(setError(e.message))
     }
@@ -54,13 +54,12 @@ export const createRecipe = (payload) => async (dispatch) => {
     } catch (e) {
         console.log(e.message)
     }finally {
-        dispatch(showModal())
+        //dispatch(showModal('create'))
     }
 }
 
 export const updateRecipe = (payload) => async (dispatch) => {
     try {
-        console.log(payload)
         const response = await fetch(`http://localhost:8000/recipes/${payload.recipeId}/`, {
             method: 'PUT',
             body: JSON.stringify(payload),
@@ -79,7 +78,7 @@ export const updateRecipe = (payload) => async (dispatch) => {
     } catch (e) {
         console.log(e.message)
     }finally {
-        dispatch(showModal('update'))
+        dispatch(setCurrentRecipe(payload))
     }
 }
 
@@ -88,7 +87,7 @@ export const modalReducer = (state={isModalOpen:false, type:'create'}, action) =
         case 'modal/showModal': {
             return {
                 isModalOpen: !state.isModalOpen,
-                type: action.payload ? action.payload: 'create'
+                type: action.payload? action.payload: ''
             }
         }
         default:
@@ -97,20 +96,28 @@ export const modalReducer = (state={isModalOpen:false, type:'create'}, action) =
 }
 
 const updateRecipeList = (state, payload) =>{
-    const index = state.findIndex((recipe) =>{
+    const index = state.recipes.findIndex((recipe) =>{
         return recipe.recipeId === payload.recipeId;
     })
     if(index !== -1) {
         let newState = state
-        newState[index] = payload
+        newState.recipes[index] = payload
         return newState
     }else{
-        return [...state,payload]
+        return {
+            ...state,
+            recipes: [...state.recipes,payload]
+        }
 
     }
 }
 
-export const recipeReducer = (state = [], action) => {
+const initialRecipeState = {
+    recipes:[],
+    currentRecipe:null
+}
+
+export const recipeCrudReducer = (state = initialRecipeState, action) => {
     switch (action.type) {
         case 'recipe/add': {
             return updateRecipeList(state, action.payload)
@@ -118,27 +125,41 @@ export const recipeReducer = (state = [], action) => {
         case 'recipe/update':{
             return updateRecipeList(state, action.payload)
         }
-        case 'recipe/get': {
-            return state
+        case 'recipe/set': {
+            return {
+                ...state,
+                recipes: action.payload
+            }
         }
 
         case 'recipe/fulfilled': {
-            return action.payload
+            return {
+                ...state,
+                recipes: action.payload
+            }
         }
         default:
             return state
     }
 }
 
-export const recipeToEditReducer = (state=null,action) => {
+export const currentRecipeReducer = (state,action) => {
     switch (action.type) {
-        case 'recipe/setRecipeToEdit':{
-            return action.payload
+        case 'recipe/setCurrentRecipe':{
+            return {
+                ...state,
+                currentRecipe: action.payload
+            }
         }
-        case 'recipe/resetRecipeToEdit':{
-            return null
+        case 'recipe/resetCurrentRecipe':{
+            return {
+                ...state,
+                currentRecipe: null
+            }
         }
         default:
             return state
     }
 }
+
+export const recipeReducer = reduceReducers(recipeCrudReducer, currentRecipeReducer)

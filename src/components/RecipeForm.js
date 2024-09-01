@@ -2,21 +2,22 @@ import {FieldArray, FormikProvider, useFormik} from "formik";
 import {useDispatch, useSelector} from "react-redux";
 import {useRef} from "react";
 import TheButton from "./ui/TheButton";
-import {createRecipe, selectRecipeToEdit, updateRecipe} from "../features/recipes";
+import {createRecipe, selectCurrentRecipe, updateRecipe} from "../features/recipes";
 import {selectIngredients} from "../features/ingredients";
 
 const RecipeForm = ({action}) => {
-    const recipe = useSelector(selectRecipeToEdit)
+    let recipe = useSelector(selectCurrentRecipe)
+    if(action==='create') recipe=null
     const initialValues= {
         title: recipe?.title || '',
-            description: recipe?.description || '',
-            image: null,
-            ingredients: recipe?.ingredients.map(x => {
-                return {
-                    'ingredient':x.ingredient.ingredientId,
-                    'quantity':x.quantity,
-                    'unit':x.unit
-                }}) || []
+        description: recipe?.description || '',
+        image: null,
+        ingredients: recipe?.ingredients.map(x => {
+            return {
+                'ingredient':x.ingredient.ingredientId,
+                'quantity':x.quantity,
+                'unit':x.unit
+            }}) || []
     }
     const imageRef = useRef(null);
     const ingredientsList = useSelector(selectIngredients)
@@ -80,7 +81,7 @@ const RecipeForm = ({action}) => {
             </div>
             <div className="mb-3">
                 <FieldArray name="ingredients">
-                    {({insert, remove, push}) => (
+                    {({remove, push}) => (
                         <div>
                             {formik.values.ingredients.length > 0 &&
                                 formik.values.ingredients.map((ing, index) => (

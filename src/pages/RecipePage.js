@@ -1,15 +1,13 @@
-import {useLocation} from "react-router-dom";
 import imagePlaceholder from '../assets/imagePlaceholder.png'
 import Ingredients from "../components/Ingredients";
 import TheContainer from "../components/ui/TheContainer";
 import TheButton from "../components/ui/TheButton";
-import {useDispatch} from "react-redux";
-import {setRecipeToEdit, showModal} from "../features/recipes";
+import {useDispatch, useSelector} from "react-redux";
+import {selectCurrentRecipe, showModal} from "../features/recipes";
 
 const RecipePage = () => {
-    const location = useLocation()
-    const recipe = location.state;
     const dispatch = useDispatch()
+    const recipe = useSelector(selectCurrentRecipe)
 
     return (
         <div className="container">
@@ -30,7 +28,7 @@ const RecipePage = () => {
                            type="button"
                            data-bs-toggle="modal"
                            data-bs-target="#recipeModal"
-                           onClick={() => {dispatch(setRecipeToEdit(recipe)); dispatch(showModal('update')); }}
+                           onClick={() => {dispatch(showModal('update')); }}
                 >Modificar
                 </TheButton>
             </div>
