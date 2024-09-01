@@ -18,3 +18,6 @@ export const asyncMac = asyncTypes => ([
     mac(asyncTypes[1],'payload'),
     mac(asyncTypes[2],'error'),
 ])
+
+export const reduceReducers = (...reducers) =>(state, action)=>
+    reducers.reduce((acc,el) => el(acc, action),state)
